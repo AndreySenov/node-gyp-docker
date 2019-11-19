@@ -1,4 +1,4 @@
-# node-gyp-docker
+# node-gyp
 
 [node-gyp](https://www.npmjs.com/package/node-gyp) installed globally over the official [NodeJS image](https://hub.docker.com/_/node)
 
