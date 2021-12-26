@@ -1,0 +1,76 @@
+name: default
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 3 * * *'
+  pull_request:
+    branches:
+      - '**'
+
+env:
+  REPOSITORY: andreysenov/node-gyp
+  VERSION: 8.4.1
+
+jobs:
+  node-gyp:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        context: [
+          {
+            dockerfile: Dockerfile,
+            node: node-lts,
+            os: alpine
+          },
+          {
+            dockerfile: Dockerfile.node14,
+            node: node-14,
+            os: alpine
+          },
+          {
+            dockerfile: Dockerfile.node12,
+            node: node-12,
+            os: alpine
+          }
+        ]
+
+    steps:
+
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Build the Docker image
+        run: >
+          docker build . --no-cache --pull
+          -f ${{ matrix.context.dockerfile }}
+          -t ${{ env.REPOSITORY }}:${{ env.VERSION }}-${{ matrix.context.node }}
+          -t ${{ env.REPOSITORY }}:${{ env.VERSION }}-${{ matrix.context.node }}-${{ matrix.context.os }}
+          -t ${{ env.REPOSITORY }}:latest-${{ matrix.context.node }}
+          -t ${{ env.REPOSITORY }}:latest-${{ matrix.context.node }}-${{ matrix.context.os }}
+          --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          --build-arg VERSION=${{ env.VERSION }}
+          --build-arg VCS_REF=${{ github.sha }}
+
+      - name: Login to Docker Hub
+        if: ${{ github.event_name != 'pull_request' }}
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Publish the Docker image
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          docker push ${{ env.REPOSITORY }}:${{ env.VERSION }}-${{ matrix.context.node }}
+          docker push ${{ env.REPOSITORY }}:${{ env.VERSION }}-${{ matrix.context.node }}-${{ matrix.context.os }}
+          docker push ${{ env.REPOSITORY }}:latest-${{ matrix.context.node }}
+
+      - name: Publish the Docker image (Latest)
+        if: ${{ github.event_name != 'pull_request' && matrix.context.dockerfile == 'Dockerfile' }}
+        run: |
+          docker tag ${{ env.REPOSITORY }}:${{ env.VERSION }}-${{ matrix.context.node }}-${{ matrix.context.os }} ${{ env.REPOSITORY }}:${{ env.VERSION }}
+          docker tag ${{ env.REPOSITORY }}:${{ env.VERSION }}-${{ matrix.context.node }}-${{ matrix.context.os }} ${{ env.REPOSITORY }}:latest-${{ matrix.context.os }}
+          docker tag ${{ env.REPOSITORY }}:${{ env.VERSION }}-${{ matrix.context.node }} ${{ env.REPOSITORY }}:latest
+          docker push ${{ env.REPOSITORY }}:${{ env.VERSION }}
+          docker push ${{ env.REPOSITORY }}:latest-${{ matrix.context.os }}
+          docker push ${{ env.REPOSITORY }}:latest
