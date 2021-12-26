@@ -16,7 +16,7 @@ LABEL org.label-schema.schema-version="1.0" \
       ci_pipeline_id=${CI_PIPELINE_ID}
 ENV NODE_GYP_VERSION=${VERSION}
 ENV HOME=/home/node
-RUN apk add --no-cache python make g++ && \
+RUN apk add --no-cache python3 make g++ && \
     yarn global add node-gyp@${VERSION} && \
     yarn cache clean && \
     node-gyp help && \
