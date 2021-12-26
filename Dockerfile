@@ -11,9 +11,7 @@ LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.description="node-gyp with toolchain on the NodeJS image" \
       org.label-schema.url="https://github.com/nodejs/node-gyp/" \
       org.label-schema.vcs-url="https://github.com/AndreySenov/node-gyp-docker/" \
-      org.label-schema.vcs-ref=${VCS_REF} \
-      ci_job_id=${CI_JOB_ID} \
-      ci_pipeline_id=${CI_PIPELINE_ID}
+      org.label-schema.vcs-ref=${VCS_REF}
 ENV NODE_GYP_VERSION=${VERSION}
 ENV HOME=/home/node
 RUN apk add --no-cache python3 make g++ && \
