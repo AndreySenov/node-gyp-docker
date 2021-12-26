@@ -18,7 +18,7 @@ OUT OF OR IN CONNECTION WITH THE DOCKER IMAGE OR THE USE OR OTHER DEALINGS IN TH
 
 #### Tags & Dockerfiles
 * [latest, latest-node-lts](https://github.com/AndreySenov/node-gyp-docker/blob/main/Dockerfile)
-* [latest-node-14](https://github.com/AndreySenov/fnode-gyp-docker/blob/main/Dockerfile.node14)
+* [latest-node-14](https://github.com/AndreySenov/node-gyp-docker/blob/main/Dockerfile.node14)
 * [latest-node-12](https://github.com/AndreySenov/node-gyp-docker/blob/main/Dockerfile.node12)
 
 #### Where to find more versions and tags
